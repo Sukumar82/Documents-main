@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  # ──────────────────────────────────────────
+  # MySQL 8 – initialised from schema.sql
+  # ──────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: banking_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: niceday
+      # Creates the 'online_bank' database before running init scripts
+      MYSQL_DATABASE: online_bank
+    # Do not publish MySQL to the host by default — keep it internal to the
+    # Compose network so the backend can access it without risk of host port
+    # collisions (e.g. when a local MySQL is already running).
+    volumes:
+      # Mount the project schema (creates tables + inserts sample data)
+      - ./team3di-springbootbackendtest_v2/team3di-springbootbackendtest_v2/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      # Persist data between container restarts
+      - mysql_data:/var/lib/mysql
+    # Use native password auth for Spring Boot JDBC compatibility
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pniceday"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ──────────────────────────────────────────
+  # Spring Boot backend – waits for MySQL health
+  # ──────────────────────────────────────────
+  backend:
+    build:
+      context: ./team3di-springbootbackendtest_v2/team3di-springbootbackendtest_v2
+      dockerfile: Dockerfile
+    container_name: banking_backend
+    ports:
+      - "8080:8080"
+    environment:
+      # application.properties reads ${MYSQL_HOST:localhost} – override for Docker
+      MYSQL_HOST: mysql
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ──────────────────────────────────────────
+  # React frontend – served by nginx
+  # nginx proxies /api/* to Spring Boot so
+  # the browser sees same-origin requests (no CORS)
+  # ──────────────────────────────────────────
+  frontend:
+    build:
+      context: ./team3di-reactfrontendtest_v2/team3di-reactfrontendtest_v2
+      dockerfile: Dockerfile
+    container_name: banking_frontend
+    ports:
+      # Access the app at http://localhost:3000
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

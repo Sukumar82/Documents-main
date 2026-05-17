@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🛠️ Implementation Guide</title>
+  <style>
+    :root {
+      --primary: #0d47a1;
+      --accent:  #00bcd4;
+      --green:   #2e7d32;
+      --orange:  #e65100;
+      --purple:  #6a1b9a;
+      --bg:      #f0f4f8;
+      --card:    #ffffff;
+      --border:  #dce1e7;
+      --text:    #1c2025;
+      --muted:   #5f6368;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 40px 20px;
+      line-height: 1.75;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0d47a1 0%, #1565c0 40%, #0097a7 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin-bottom: 36px;
+      box-shadow: 0 4px 24px rgba(13,71,161,.35);
+    }
+    header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    header p  { font-size: 1.05rem; opacity: .9; max-width: 700px; }
+
+    /* ── SECTION TITLES ── */
+    h2 {
+      font-size: 1.25rem;
+      color: var(--primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    h3 { font-size: 1rem; margin-bottom: 8px; color: var(--text); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      transition: box-shadow .2s;
+    }
+    .card:hover { box-shadow: 0 5px 20px rgba(0,0,0,.1); }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    .b-fe     { background: #e8f5e9; color: #2e7d32; }
+    .b-be     { background: #e3f2fd; color: #0d47a1; }
+    .b-db     { background: #fff3e0; color: #e65100; }
+    .b-docker { background: #e0f7fa; color: #00838f; }
+    .b-test   { background: #f3e5f5; color: #6a1b9a; }
+    .b-fix    { background: #fce4ec; color: #880e4f; }
+
+    /* ── STEPS ── */
+    .step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .step-icon {
+      min-width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; margin-bottom: 4px; color: var(--primary); }
+
+    /* ── CODE BLOCKS ── */
+    .code-block {
+      background: #1e2a3a;
+      color: #abb2bf;
+      border-radius: 10px;
+      padding: 18px 22px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: .85rem;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.6;
+      position: relative;
+    }
+    .code-block .kw  { color: #c678dd; }
+    .code-block .st  { color: #98c379; }
+    .code-block .cm  { color: #5c6370; font-style: italic; }
+    .code-block .fn  { color: #61afef; }
+    .code-block .nu  { color: #d19a66; }
+    .code-block .hl  { background: rgba(255,220,0,.08); display: block; margin: 0 -22px; padding: 0 22px; }
+
+    code {
+      background: #f1f3f4;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-family: 'Consolas', monospace;
+      font-size: .87rem;
+      color: #c62828;
+    }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      font-size: .94rem;
+    }
+    .callout-info    { background: #e3f2fd; border-left: 5px solid #1565c0; }
+    .callout-success { background: #e8f5e9; border-left: 5px solid #2e7d32; }
+    .callout-warn    { background: #fff8e1; border-left: 5px solid #f9a825; }
+    .callout-purple  { background: #f3e5f5; border-left: 5px solid #7b1fa2; }
+
+    /* ── FILE CHIP ── */
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e8f0fe;
+      border: 1px solid #c5d8ff;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: 'Consolas', monospace;
+      font-size: .82rem;
+      color: #1558d6;
+      margin: 3px 3px 3px 0;
+    }
+
+    /* ── ARCHITECTURE DIAGRAM ── */
+    .arch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .arch-box {
+      background: #e8f0fe;
+      border: 2px solid #1a73e8;
+      border-radius: 12px;
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 120px;
+      font-weight: 600;
+      font-size: .9rem;
+    }
+    .arch-arrow {
+      font-size: 1.5rem;
+      color: var(--muted);
+      margin: 0 6px;
+    }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 8px 0;
+    }
+    .flow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 10px 0;
+      border-left: 3px solid #1a73e8;
+      padding-left: 18px;
+      margin-left: 12px;
+    }
+    .flow-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #1a73e8;
+      margin-top: 6px;
+      flex-shrink: 0;
+      margin-left: -21px;
+    }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { background: #e8f0fe; color: var(--primary); padding: 10px 14px; text-align: left; font-size: .88rem; }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: .88rem; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f8f9fa; }
+
+    /* ── GRID ── */
+    .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; margin-top: 40px; color: var(--muted); font-size: .85rem; }
+
+    p { margin-bottom: 10px; }
+    ul { padding-left: 22px; margin-bottom: 10px; }
+    ul li { margin-bottom: 7px; }
+
+    .tag { background: #e0f2f1; color: #00695c; border-radius: 4px; padding: 1px 8px; font-size: .8rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────  HEADER  ───────────── -->
+<header>
+  <span style="display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:4px 14px;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:14px;">🛠️ Implementation Report</span>
+  <h1>⚙️ Online Banking App — Implementation Guide</h1>
+  <p>A complete, spoon-feeding walkthrough of every change made to satisfy the requirements — what was changed, where it lives, and why it works.</p>
+</header>
+
+<!-- ─────────────  OVERVIEW  ───────────── -->
+<div class="card">
+  <h2>🗺️ Overview — What We Built</h2>
+  <p>Three separate things were implemented to satisfy the assessment requirements:</p>
+
+  <div class="two-col">
+    <div>
+      <div class="step">
+        <div class="step-icon">💰</div>
+        <div class="step-body">
+          <strong>Req 1 — Balance Display</strong>
+          Added the current balance value to the React transaction table page so users can see how much money is in their account.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">📅</div>
+        <div class="step-body">
+          <strong>Req 2 — Date Range Filter</strong>
+          Added two date pickers to the form (frontend), created a new DTO and endpoint logic (backend), and a new database query (repository) that filters by date.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="step">
+        <div class="step-icon">🐳</div>
+        <div class="step-body">
+          <strong>Infrastructure — Docker Compose</strong>
+          Wrote <code>Dockerfile</code> for each service, an <code>nginx.conf</code> to proxy API calls, and a <code>docker-compose.yml</code> to wire all three containers together.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🧪</div>
+        <div class="step-body">
+          <strong>Tests — Mockito Unit Tests</strong>
+          Wrote 6 unit tests in <code>TransactionDateRangeTest.java</code> to prove the new date filter logic works correctly under different scenarios.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arch" style="margin-top:18px;">
+    <div class="arch-box">🌐 Browser<br><small>:3000</small></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box" style="background:#e0f7fa;border-color:#00838f;">⚛️ React<br><small>nginx</small></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box" style="background:#e8f5e9;border-color:#2e7d32;">☕ Spring Boot<br><small>:8080</small></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box" style="background:#fff3e0;border-color:#e65100;">🗄️ MySQL<br><small>:3306</small></div>
+  </div>
+</div>
+
+<!-- ─────────────  REQ 1  ───────────── -->
+<div class="card">
+  <h2>💰 Requirement 1 — Display the Current Balance</h2>
+  <span class="badge b-fe">Frontend Change</span>
+
+  <div class="callout callout-info">
+    <strong>🤔 What was the problem?</strong><br>
+    The backend API was already sending back an <code>account.currentBalance</code> value but the React component simply never rendered it on screen. The user had no way to see their balance.
+  </div>
+
+  <h3>📂 File Changed</h3>
+  <span class="file-chip">⚛️ src/pages/TransactionTablePage.jsx</span>
+
+  <h3 style="margin-top:16px;">✏️ What we changed</h3>
+  <p>
+    After fetching the account data, the component stores the balance in state
+    and renders it prominently above the transactions table.
+  </p>
+
+  <div class="code-block">
+<span class="cm">// 1️⃣  New state variable to hold the balance</span>
+<span class="kw">const</span> [currentBalance, setCurrentBalance] = useState(<span class="kw">null</span>);
+
+<span class="cm">// 2️⃣  When the API responds, save the balance</span>
+<span class="fn">setCurrentBalance</span>(response.data.account.currentBalance);
+
+<span class="cm">// 3️⃣  Render it on the page</span>
+{currentBalance !== <span class="kw">null</span> &amp;&amp; (
+  &lt;div className=<span class="st">"balance-display"</span>&gt;
+    💰 Current Balance: &lt;strong&gt;£{currentBalance.<span class="fn">toFixed</span>(<span class="nu">2</span>)}&lt;/strong&gt;
+  &lt;/div&gt;
+)}
+  </div>
+
+  <div class="callout callout-success">
+    ✅ <strong>Result:</strong> The user can now see their account balance displayed clearly on the page as soon as they search for an account.
+  </div>
+</div>
+
+<!-- ─────────────  REQ 2 — FRONTEND  ───────────── -->
+<div class="card">
+  <h2>📅 Requirement 2 — Date Range Filter (Frontend)</h2>
+  <span class="badge b-fe">Frontend Change</span>
+
+  <div class="callout callout-info">
+    <strong>🤔 What was the problem?</strong><br>
+    The form only had fields for Sort Code and Account Number. There was no way for the user to say "only show me transactions from these dates."
+  </div>
+
+  <h3>📂 File Changed</h3>
+  <span class="file-chip">⚛️ src/pages/TransactionTablePage.jsx</span>
+
+  <h3 style="margin-top:16px;">✏️ What we changed</h3>
+
+  <div class="flow">
+    <div class="flow-item">
+      <div class="flow-dot"></div>
+      <div>
+        <strong>Added two state variables</strong><br>
+        <code>startDate</code> and <code>endDate</code> — both start as empty strings.
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-dot"></div>
+      <div>
+        <strong>Added two date input fields to the form</strong><br>
+        Standard HTML <code>&lt;input type="date"&gt;</code> elements, bound to the state variables via <code>onChange</code>.
+      </div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-dot"></div>
+      <div>
+        <strong>Included the dates in the API request</strong><br>
+        When submitting, <code>startDate</code> and <code>endDate</code> are added to the request body. If they are empty, the backend still returns all transactions.
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="cm">// Two new state variables</span>
+<span class="kw">const</span> [startDate, setStartDate] = useState(<span class="st">''</span>);
+<span class="kw">const</span> [endDate,   setEndDate]   = useState(<span class="st">''</span>);
+
+<span class="cm">// Two new form inputs</span>
+&lt;input type=<span class="st">"date"</span> value={startDate} onChange={e =&gt; <span class="fn">setStartDate</span>(e.target.value)} /&gt;
+&lt;input type=<span class="st">"date"</span> value={endDate}   onChange={e =&gt; <span class="fn">setEndDate</span>(e.target.value)} /&gt;
+
+<span class="cm">// Sent with the request body</span>
+<span class="fn">axios.put</span>(<span class="st">'/api/account/transactions'</span>, {
+  sortCode, accountNumber, startDate, endDate
+});
+  </div>
+
+  <div class="callout callout-success">
+    ✅ <strong>Result:</strong> The user picks a start date and end date, clicks Search, and only sees transactions within that window.
+  </div>
+</div>
+
+<!-- ─────────────  REQ 2 — BACKEND  ───────────── -->
+<div class="card">
+  <h2>⚙️ Requirement 2 — Date Range Filter (Backend)</h2>
+  <span class="badge b-be">Backend Changes</span>
+  <p>
+    The backend needed changes across <strong>four layers</strong>. Think of it like a chain —
+    the request flows from top to bottom and we had to update each link in the chain:
+  </p>
+
+  <div class="arch" style="flex-direction:column;align-items:flex-start;gap:0;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+      <div style="font-size:1.4rem;width:40px;text-align:center;">1️⃣</div>
+      <div style="background:#e3f2fd;border-radius:8px;padding:8px 16px;flex:1;font-weight:600;">DTO — <code>AllTransactionsInput.java</code> (new file)</div>
+    </div>
+    <div style="margin-left:20px;color:#aaa;">↓</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+      <div style="font-size:1.4rem;width:40px;text-align:center;">2️⃣</div>
+      <div style="background:#e3f2fd;border-radius:8px;padding:8px 16px;flex:1;font-weight:600;">Controller — <code>TransactionRestController.java</code></div>
+    </div>
+    <div style="margin-left:20px;color:#aaa;">↓</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+      <div style="font-size:1.4rem;width:40px;text-align:center;">3️⃣</div>
+      <div style="background:#e3f2fd;border-radius:8px;padding:8px 16px;flex:1;font-weight:600;">Service — <code>AccountService.java</code> + <code>TransactionService.java</code></div>
+    </div>
+    <div style="margin-left:20px;color:#aaa;">↓</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+      <div style="font-size:1.4rem;width:40px;text-align:center;">4️⃣</div>
+      <div style="background:#e3f2fd;border-radius:8px;padding:8px 16px;flex:1;font-weight:600;">Repository — <code>TransactionRepository.java</code></div>
+    </div>
+  </div>
+
+  <!-- LAYER 1 — DTO -->
+  <div style="border:1px solid #c5d8ff;border-radius:10px;padding:20px;margin-bottom:18px;">
+    <span class="badge b-be">Layer 1 — New DTO</span>
+    <h3>📄 <code>AllTransactionsInput.java</code> — Brand New File</h3>
+    <p>
+      A <strong>Data Transfer Object (DTO)</strong> is just a simple Java class whose only job is to carry data from the frontend into the backend. Think of it as an envelope.
+    </p>
+    <p>
+      We created a new DTO that <em>extends</em> the existing <code>AccountInput</code> (which already had sort code and account number), and adds two new fields:
+    </p>
+    <div class="code-block">
+<span class="kw">public class</span> <span class="fn">AllTransactionsInput</span> <span class="kw">extends</span> AccountInput {
+
+    <span class="kw">private</span> String startDate;  <span class="cm">// e.g. "2019-04-01"</span>
+    <span class="kw">private</span> String endDate;    <span class="cm">// e.g. "2019-07-31"</span>
+
+    <span class="cm">// Getters and Setters below...</span>
+}
+    </div>
+    <div class="callout callout-warn">
+      💡 <strong>Why extend instead of copy?</strong><br>
+      The existing <code>AccountInput</code> already validates the sort code and account number format. By extending it, the new DTO reuses that validation for free — no duplicate code.
+    </div>
+  </div>
+
+  <!-- LAYER 2 — CONTROLLER -->
+  <div style="border:1px solid #c5d8ff;border-radius:10px;padding:20px;margin-bottom:18px;">
+    <span class="badge b-be">Layer 2 — Controller</span>
+    <h3>🎮 <code>TransactionRestController.java</code></h3>
+    <p>
+      The controller is the "door" that the frontend knocks on. It reads the incoming HTTP request and decides what to do with it.
+    </p>
+    <p>We updated the <code>getAllTransactions</code> method to accept our new <code>AllTransactionsInput</code> DTO and then branch:</p>
+    <div class="code-block">
+<span class="cm">// BEFORE — only accepted AccountInput</span>
+<span class="kw">public</span> ResponseEntity <span class="fn">getAllTransactions</span>(<span class="kw">@RequestBody</span> AccountInput input) { ... }
+
+<span class="cm">// AFTER — now accepts AllTransactionsInput (which has startDate + endDate)</span>
+<span class="kw">public</span> ResponseEntity <span class="fn">getAllTransactions</span>(<span class="kw">@RequestBody</span> AllTransactionsInput input) {
+
+    <span class="cm">// If the user gave us dates → filter by date range</span>
+    <span class="kw">if</span> (input.getStartDate() != <span class="kw">null</span> &amp;&amp; !input.getStartDate().<span class="fn">isEmpty</span>()) {
+        <span class="kw">return</span> accountService.<span class="fn">findTransactionsByDateRange</span>(...);
+    }
+
+    <span class="cm">// No dates → return everything (original behaviour)</span>
+    <span class="kw">return</span> accountService.<span class="fn">findTransactions</span>(...);
+}
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>Backwards compatible:</strong> If the frontend sends no dates, the endpoint still works exactly as before — no breaking changes.
+    </div>
+  </div>
+
+  <!-- LAYER 3 — SERVICE -->
+  <div style="border:1px solid #c5d8ff;border-radius:10px;padding:20px;margin-bottom:18px;">
+    <span class="badge b-be">Layer 3 — Service</span>
+    <h3>🔧 <code>AccountService.java</code> &amp; <code>TransactionService.java</code></h3>
+    <p>
+      The service layer contains the business logic. It knows "what should happen" — it does not talk to the database directly, it delegates that to the repository.
+    </p>
+    <p>New method added to <code>AccountService</code>:</p>
+    <div class="code-block">
+<span class="kw">public</span> ResponseEntity <span class="fn">findTransactionsByDateRange</span>(
+        String sortCode, String accountNumber,
+        String startDate, String endDate) {
+
+    <span class="cm">// 1. Look up the account by sort code + account number</span>
+    Account account = accountRepository.<span class="fn">findBySortCodeAndAccountNumber</span>(...);
+
+    <span class="cm">// 2. Parse the date strings into LocalDateTime objects</span>
+    LocalDateTime start = LocalDate.<span class="fn">parse</span>(startDate).<span class="fn">atStartOfDay</span>();
+    LocalDateTime end   = LocalDate.<span class="fn">parse</span>(endDate).<span class="fn">atTime</span>(<span class="nu">23</span>, <span class="nu">59</span>, <span class="nu">59</span>);
+
+    <span class="cm">// 3. Ask the transaction service to get filtered transactions</span>
+    List&lt;Transaction&gt; txns = transactionService
+        .<span class="fn">getTransactionsByDateRange</span>(account.getId(), start, end);
+
+    <span class="cm">// 4. Return the account + filtered transactions</span>
+    <span class="kw">return</span> ResponseEntity.<span class="fn">ok</span>(<span class="kw">new</span> <span class="fn">AccountTransactions</span>(account, txns));
+}
+    </div>
+    <div class="callout callout-warn">
+      💡 <strong>Why parse to LocalDateTime?</strong><br>
+      The database stores <code>initiationDate</code> as a timestamp. We set start to <em>midnight</em> (00:00:00) and end to <em>23:59:59</em> so that both dates are <strong>fully inclusive</strong> as the requirement states.
+    </div>
+  </div>
+
+  <!-- LAYER 4 — REPOSITORY -->
+  <div style="border:1px solid #c5d8ff;border-radius:10px;padding:20px;">
+    <span class="badge b-be">Layer 4 — Repository</span>
+    <h3>🗄️ <code>TransactionRepository.java</code></h3>
+    <p>
+      The repository is the only layer that talks directly to MySQL. We add a new method using Spring Data JPA's <em>query derivation</em> — you describe what you want in the method name and Spring writes the SQL automatically!
+    </p>
+    <div class="code-block">
+<span class="cm">// Spring JPA reads this method name and generates the SQL for us:</span>
+<span class="cm">// SELECT * FROM transaction</span>
+<span class="cm">// WHERE source_account_id = ?</span>
+<span class="cm">// AND initiation_date BETWEEN ? AND ?</span>
+<span class="cm">// ORDER BY initiation_date ASC</span>
+
+List&lt;Transaction&gt; <span class="fn">findBySourceAccountIdAndInitiationDateBetweenOrderByInitiationDate</span>(
+    Long accountId,
+    LocalDateTime startDate,
+    LocalDateTime endDate
+);
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>No raw SQL needed!</strong> Spring Data JPA reads the method name like a sentence and translates it into an optimised SQL query automatically.
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────  UNIT TESTS  ───────────── -->
+<div class="card">
+  <h2>🧪 Unit Tests — Proving It Works</h2>
+  <span class="badge b-test">6 Mockito Tests</span>
+
+  <div class="callout callout-purple">
+    <strong>🤔 Why unit tests?</strong><br>
+    Unit tests run without a database or server. They check that each piece of logic is correct on its own. Mockito lets us "fake" the database layer so we can test the service in isolation.
+  </div>
+
+  <h3>📂 New Test File</h3>
+  <span class="file-chip">🧪 src/test/java/.../TransactionDateRangeTest.java</span>
+
+  <h3 style="margin-top:16px;">📋 The 6 Test Scenarios</h3>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Test Name</th>
+      <th>What it checks</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><code>getTransactionsByDateRange_returnsResults</code></td>
+      <td>Given valid dates, the correct transactions are returned</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code>getTransactionsByDateRange_emptyList</code></td>
+      <td>If no transactions match the date range, an empty list comes back (not an error)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code>getTransactionsByDateRange_startDateInclusive</code></td>
+      <td>A transaction on exactly the start date IS included in the results</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code>getTransactionsByDateRange_endDateInclusive</code></td>
+      <td>A transaction on exactly the end date IS included in the results</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><code>getTransactionsByDateRange_multipleResults</code></td>
+      <td>Multiple transactions within the range are all returned, in order</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><code>findTransactionsByDateRange_accountNotFound</code></td>
+      <td>If the account does not exist, the service returns a 404 Not Found response</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-success">
+    ✅ All 6 tests pass. They cover happy paths, edge cases, and error conditions.
+  </div>
+</div>
+
+<!-- ─────────────  DOCKER  ───────────── -->
+<div class="card">
+  <h2>🐳 Docker — One Command to Rule Them All</h2>
+  <span class="badge b-docker">Infrastructure</span>
+
+  <p>Four new files were created to make the entire app runnable with a single command:</p>
+
+  <div class="two-col" style="margin-bottom:20px;">
+    <div style="border:1px solid var(--border);border-radius:10px;padding:18px;">
+      <span class="file-chip">🐳 docker-compose.yml</span>
+      <p style="margin-top:10px;">The "conductor" file. Defines all three services and how they connect:</p>
+      <ul>
+        <li><strong>mysql</strong> — MySQL 8.0 database with health check</li>
+        <li><strong>backend</strong> — Spring Boot (waits for MySQL to be healthy first)</li>
+        <li><strong>frontend</strong> — React app served by nginx on port 3000</li>
+      </ul>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:18px;">
+      <span class="file-chip">⚛️ frontend/Dockerfile</span>
+      <p style="margin-top:10px;">Two-stage build:</p>
+      <ul>
+        <li>Stage 1: Install Node.js, run <code>npm install</code>, run <code>npm run build</code></li>
+        <li>Stage 2: Copy the built files into an <strong>nginx</strong> web server image — tiny and fast</li>
+      </ul>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:18px;">
+      <span class="file-chip">☕ backend/Dockerfile</span>
+      <p style="margin-top:10px;">Two-stage build:</p>
+      <ul>
+        <li>Stage 1: Use Maven to compile the Java code into a JAR file</li>
+        <li>Stage 2: Copy the JAR into a slim Java runtime image and run it</li>
+      </ul>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:18px;">
+      <span class="file-chip">🌐 nginx.conf</span>
+      <p style="margin-top:10px;">Tells nginx two things:</p>
+      <ul>
+        <li>Requests starting with <code>/api/</code> → forward to the Spring Boot backend</li>
+        <li>Everything else → serve the React app (with SPA routing support)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>🔄 Startup Order</h3>
+  <div class="flow">
+    <div class="flow-item"><div class="flow-dot"></div><div>🗄️ <strong>MySQL starts first</strong> — Docker waits until the health check passes (database is ready to accept connections)</div></div>
+    <div class="flow-item"><div class="flow-dot"></div><div>☕ <strong>Spring Boot starts second</strong> — only after MySQL is healthy, so no "connection refused" errors</div></div>
+    <div class="flow-item"><div class="flow-dot"></div><div>⚛️ <strong>React / nginx starts in parallel</strong> — it doesn't need the backend to start; it's just static files</div></div>
+    <div class="flow-item"><div class="flow-dot"></div><div>✅ <strong>App is live</strong> — open <code>http://localhost:3000</code></div></div>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>▶️ To run the app:</strong><br><br>
+    <code>docker compose up --build</code><br><br>
+    To stop: <code>docker compose down</code>
+  </div>
+</div>
+
+<!-- ─────────────  BUGS FIXED  ───────────── -->
+<div class="card">
+  <h2>🔧 Build Issues Fixed During Setup</h2>
+  <span class="badge b-fix">Bug Fixes</span>
+  <p>Several build errors had to be resolved before the app could run in Docker. Here is what each one was and how it was fixed:</p>
+
+  <table>
+    <tr>
+      <th>🐛 Problem</th>
+      <th>📍 Where</th>
+      <th>✅ Fix Applied</th>
+    </tr>
+    <tr>
+      <td><code>openjdk:17-jdk-slim</code> not found on Docker Hub</td>
+      <td>Backend Dockerfile</td>
+      <td>Switched to <code>eclipse-temurin:17-jre-jammy</code> (the official replacement)</td>
+    </tr>
+    <tr>
+      <td><code>npm ci</code> failed — lockfile out of sync (ajv version)</td>
+      <td>Frontend Dockerfile</td>
+      <td>Replaced <code>npm ci</code> with <code>npm install --legacy-peer-deps</code></td>
+    </tr>
+    <tr>
+      <td>MySQL port 3306 conflict with local MySQL</td>
+      <td>docker-compose.yml</td>
+      <td>Removed the host port mapping for MySQL (containers still communicate internally)</td>
+    </tr>
+    <tr>
+      <td>"no main manifest attribute in app.jar"</td>
+      <td>pom.xml</td>
+      <td>Added the <code>spring-boot-maven-plugin</code> repackage goal so Maven creates a proper executable JAR</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ─────────────  FILES CHANGED  ───────────── -->
+<div class="card">
+  <h2>📁 Complete List of Files Changed or Created</h2>
+  <table>
+    <tr>
+      <th>File</th>
+      <th>New or Modified</th>
+      <th>What Changed</th>
+    </tr>
+    <tr>
+      <td><span class="file-chip">⚛️ TransactionTablePage.jsx</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>Added balance display, startDate/endDate state, two date inputs, passes dates in API call</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">☕ AllTransactionsInput.java</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>New DTO extending AccountInput — adds startDate + endDate fields</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">☕ TransactionRestController.java</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>getAllTransactions now accepts AllTransactionsInput; routes to date-range or all-transactions</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">☕ AccountService.java</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>New method findTransactionsByDateRange — looks up account, parses dates, calls transaction service</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">☕ TransactionService.java</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>New method getTransactionsByDateRange — calls repository with LocalDateTime start/end</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">☕ TransactionRepository.java</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>New derived query method for BETWEEN date range ordered by initiationDate</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">🧪 TransactionDateRangeTest.java</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>6 Mockito unit tests covering the date range filtering logic</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">🐳 docker-compose.yml</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>Defines all 3 services with networking, health checks and dependency ordering</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">🐳 backend/Dockerfile</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>Two-stage Maven + eclipse-temurin build for the Spring Boot JAR</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">🐳 frontend/Dockerfile</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>Two-stage Node + nginx build for the React app</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">🌐 nginx.conf</span></td>
+      <td><span class="tag" style="background:#e8f5e9;color:#2e7d32;">New File</span></td>
+      <td>Proxies /api/ to backend:8080; all other routes serve index.html (SPA support)</td>
+    </tr>
+    <tr>
+      <td><span class="file-chip">📦 pom.xml</span></td>
+      <td><span class="tag">Modified</span></td>
+      <td>Added spring-boot-maven-plugin repackage execution so Docker gets a runnable JAR</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ─────────────  WHAT WAS ACHIEVED  ───────────── -->
+<div class="card">
+  <h2>🏆 What Was Achieved</h2>
+
+  <div class="two-col">
+    <div class="callout callout-success">
+      ✅ <strong>Req 1 — Balance Visible</strong><br>
+      Users can see their current account balance as soon as they look up an account.
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>Req 2 — Date Filter Works</strong><br>
+      Users can filter transactions to any date range. Both start and end dates are inclusive.
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>Backwards Compatible</strong><br>
+      Leaving the date fields blank still returns all transactions — nothing was broken.
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>Unit Tests Pass</strong><br>
+      6 Mockito tests verify correctness including edge cases and error paths.
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>Docker Compose Works</strong><br>
+      <code>docker compose up --build</code> starts all 3 containers. App runs at <code>localhost:3000</code>.
+    </div>
+    <div class="callout callout-success">
+      ✅ <strong>No Breaking Changes</strong><br>
+      All existing functionality continues to work. Only additive changes were made.
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────  DEMO  ───────────── -->
+<div class="card">
+  <h2>▶️ How to Demo the App</h2>
+
+  <div class="step">
+    <div class="step-icon">1️⃣</div>
+    <div class="step-body">
+      <strong>Start the app</strong><br>
+      Open a terminal in the project root and run:<br>
+      <code>docker compose up --build</code><br>
+      Wait until all 3 containers say "healthy" or "started".
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-icon">2️⃣</div>
+    <div class="step-body">
+      <strong>Open the app</strong><br>
+      Navigate to <code>http://localhost:3000</code> in your browser.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-icon">3️⃣</div>
+    <div class="step-body">
+      <strong>Search for an account</strong><br>
+      Enter Sort Code: <code>53-68-92</code> and Account Number: <code>73084635</code>, then click Search.<br>
+      You will see the <strong>current balance: £1071.78</strong> and all 4 transactions.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-icon">4️⃣</div>
+    <div class="step-body">
+      <strong>Try the date filter</strong><br>
+      Enter Start Date: <code>2019-05-01</code> and End Date: <code>2019-06-30</code>, then click Search.<br>
+      You will see only the transactions that occurred in May and June 2019.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-icon">5️⃣</div>
+    <div class="step-body">
+      <strong>Stop the app</strong><br>
+      <code>docker compose down</code>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>🛠️ Implementation Document &nbsp;·&nbsp; 3Di Assessment &nbsp;·&nbsp; Online Banking Application &nbsp;·&nbsp; 2026</p>
+</footer>
+
+</body>
+</html>

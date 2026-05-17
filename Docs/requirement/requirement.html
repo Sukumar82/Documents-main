@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📋 Project Requirements</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --accent:  #fbbc04;
+      --green:   #34a853;
+      --red:     #ea4335;
+      --bg:      #f8f9fa;
+      --card:    #ffffff;
+      --border:  #e0e0e0;
+      --text:    #202124;
+      --muted:   #5f6368;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 40px 20px;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin-bottom: 36px;
+      box-shadow: 0 4px 20px rgba(26,115,232,.3);
+    }
+
+    header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    header p  { font-size: 1.05rem; opacity: .88; max-width: 680px; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      margin-bottom: 16px;
+    }
+    .badge-blue   { background: rgba(255,255,255,.2); color: #fff; }
+    .badge-yellow { background: #fff8e1; color: #b45309; }
+    .badge-green  { background: #e8f5e9; color: #2e7d32; }
+    .badge-red    { background: #fce8e6; color: #c62828; }
+
+    h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); transition: box-shadow .2s; }
+
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .req-box {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .req-box.frontend { border-top: 4px solid #34a853; }
+    .req-box.fullstack{ border-top: 4px solid #1a73e8; }
+
+    .req-box h3 { font-size: 1.05rem; margin-bottom: 10px; }
+
+    p { margin-bottom: 12px; color: var(--text); }
+
+    ul { padding-left: 22px; margin-bottom: 12px; }
+    ul li { margin-bottom: 8px; }
+
+    .step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .step-num {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; margin-bottom: 4px; }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .tech-pill {
+      background: #e8f0fe;
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: .9rem;
+      color: #1558d6;
+    }
+    .tech-pill span { display: block; font-size: 1.5rem; margin-bottom: 4px; }
+
+    .highlight-box {
+      background: #fffde7;
+      border-left: 5px solid var(--accent);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: .95rem;
+    }
+
+    .info-box {
+      background: #e8f0fe;
+      border-left: 5px solid var(--primary);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: .95rem;
+    }
+
+    .success-box {
+      background: #e8f5e9;
+      border-left: 5px solid var(--green);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: .95rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th {
+      background: #e8f0fe;
+      color: var(--primary);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: .9rem;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f8f9fa; }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    code {
+      background: #f1f3f4;
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-family: 'Consolas', monospace;
+      font-size: .88rem;
+      color: #c62828;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ──────────────────────  HEADER  ────────────────────── -->
+<header>
+  <span class="badge badge-blue">📄 Assessment Brief</span>
+  <h1>🏦 Online Banking App — Requirements Document</h1>
+  <p>A clear, spoon-feeding guide to what was asked, why it was asked, and how the application is supposed to behave — written so that anyone can understand it in minutes.</p>
+</header>
+
+<!-- ──────────────────────  WHAT IS THIS PROJECT?  ────────────────────── -->
+<div class="card">
+  <h2>🌍 What Is This Project?</h2>
+  <p>
+    This is a <strong>full-stack online banking application</strong> that lets users look up their bank account and view transactions.
+    It is split into two parts that work together:
+  </p>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>🖥️ Frontend — React App</strong>
+      The website the user sees and interacts with. It shows a form, takes inputs, calls the backend, and displays the results.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>☕ Backend — Spring Boot REST API</strong>
+      The engine behind the scenes. It receives requests from the frontend, queries the MySQL database, and returns account &amp; transaction data.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>🗄️ Database — MySQL</strong>
+      Stores all account and transaction records. The backend reads from it using JPA/SQL queries.
+    </div>
+  </div>
+
+  <div class="info-box">
+    💡 <strong>Think of it like a mini banking portal:</strong><br>
+    You type in your sort code + account number → the app looks up your account → shows you your balance and transaction history.
+  </div>
+</div>
+
+<!-- ──────────────────────  WHO ASKED &amp; WHY  ────────────────────── -->
+<div class="card">
+  <h2>🎯 Who Asked For This &amp; Why?</h2>
+  <p>
+    The project is an <strong>assessment task</strong> set by a company (3Di). The assessor wants to see whether the candidate can:
+  </p>
+  <ul>
+    <li>📖 Read and understand an existing codebase written by someone else</li>
+    <li>✏️ Make targeted changes to both the frontend <em>and</em> backend</li>
+    <li>🔗 Connect the two parts correctly so the app still works end-to-end</li>
+    <li>🧪 Write unit tests to prove the new code is correct</li>
+    <li>🐳 Package everything with Docker so it runs with a single command</li>
+    <li>💬 Comment the code so the assessor can follow the thinking</li>
+  </ul>
+  <div class="highlight-box">
+    🏆 <strong>Bottom line:</strong> This is a "show us you can code and explain what you did" challenge — not just about making it work, but about demonstrating good engineering habits.
+  </div>
+</div>
+
+<!-- ──────────────────────  THE TWO REQUIREMENTS  ────────────────────── -->
+<div class="card">
+  <h2>📌 The Two Official Requirements</h2>
+  <p>The brief listed exactly <strong>two things</strong> that need to be built:</p>
+
+  <div class="req-grid">
+
+    <div class="req-box frontend">
+      <span class="badge badge-green">Requirement 1 — Frontend Only</span>
+      <h3>💰 Show the Current Balance</h3>
+      <p>
+        The backend already sends an <code>account.currentBalance</code> field in its response,
+        but the frontend was <strong>not displaying it</strong>.
+      </p>
+      <p>
+        <strong>What to do:</strong> Find where the account data is rendered in the React app and add a line that shows the current balance to the user.
+      </p>
+      <ul>
+        <li>No backend changes needed at all</li>
+        <li>Only the React component needs updating</li>
+        <li>The value should be readable and clearly labelled</li>
+      </ul>
+    </div>
+
+    <div class="req-box fullstack">
+      <span class="badge badge-yellow">Requirement 2 — Frontend + Backend</span>
+      <h3>📅 Filter Transactions by Date Range</h3>
+      <p>
+        Currently the app loads <em>all</em> transactions for an account. The requirement is to allow
+        the user to pick a <strong>start date</strong> and an <strong>end date</strong>, and only see
+        transactions that fall within that period.
+      </p>
+      <ul>
+        <li>Both dates are <strong>inclusive</strong> — e.g. if start = <code>2019-11-04</code>, records from that exact date are included</li>
+        <li>If no dates are given, the existing behaviour (all transactions) still works</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────  BREAKDOWN OF REQ 2  ────────────────────── -->
+<div class="card">
+  <h2>🔍 Requirement 2 — Broken Down Step by Step</h2>
+  <p>The brief specifically says to update these layers in the backend:</p>
+
+  <div class="step">
+    <div class="step-num">A</div>
+    <div class="step-body">
+      <strong>Frontend (React) — Add Two Date Inputs</strong>
+      The search form must have a <em>Start Date</em> field and an <em>End Date</em> field.
+      When the user submits, these dates must be sent to the backend along with the existing sort code &amp; account number.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">B</div>
+    <div class="step-body">
+      <strong>Transaction Controller — Accept the Dates</strong>
+      The REST endpoint that returns transactions must now accept the two new date fields in its request body.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">C</div>
+    <div class="step-body">
+      <strong>Transaction Service — Filter Logic</strong>
+      The service layer must convert the date strings into proper date-time values and pass them to the repository.
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">D</div>
+    <div class="step-body">
+      <strong>Transaction Repository — Database Query</strong>
+      A new database query must retrieve only records where <code>initiationDate</code> is between the two given dates.
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    📝 <strong>Key rule from the brief:</strong><br>
+    "The start and end dates can be inclusive of the data returned — e.g. if start date is <code>2019-11-04</code>
+    then it should also include records which have the initiation date <code>2019-11-04</code>."
+  </div>
+</div>
+
+<!-- ──────────────────────  PROPOSED TECH STACK  ────────────────────── -->
+<div class="card">
+  <h2>🛠️ Proposed Tech Stack</h2>
+  <p>The brief also mentioned which technologies and approaches should be used:</p>
+
+  <div class="tech-grid">
+    <div class="tech-pill"><span>☕</span>Java 17 Features<br><small>(streams, lambdas)</small></div>
+    <div class="tech-pill"><span>🔁</span>Aggregator Methods<br><small>(in service layer)</small></div>
+    <div class="tech-pill"><span>🗄️</span>MySQL + Indexing<br><small>(efficient queries)</small></div>
+    <div class="tech-pill"><span>🧪</span>Mockito / JUnit<br><small>(unit tests)</small></div>
+    <div class="tech-pill"><span>⚛️</span>React Frontend<br><small>(Node 18 / CRA)</small></div>
+    <div class="tech-pill"><span>🐳</span>Docker Compose<br><small>(one-command start)</small></div>
+  </div>
+</div>
+
+<!-- ──────────────────────  DATA MODEL  ────────────────────── -->
+<div class="card">
+  <h2>📊 What Data Does the App Work With?</h2>
+  <p>The MySQL database has two tables:</p>
+
+  <table>
+    <tr>
+      <th>Table</th>
+      <th>Key Fields</th>
+      <th>What it stores</th>
+    </tr>
+    <tr>
+      <td><code>account</code></td>
+      <td><code>id</code>, <code>sort_code</code>, <code>account_number</code>, <code>current_balance</code></td>
+      <td>One row per bank account — who owns it and how much money is in it</td>
+    </tr>
+    <tr>
+      <td><code>transaction</code></td>
+      <td><code>id</code>, <code>source_account_id</code>, <code>amount</code>, <code>initiation_date</code></td>
+      <td>Every deposit/withdrawal tied back to an account, with the date it happened</td>
+    </tr>
+  </table>
+
+  <div class="success-box">
+    ✅ <strong>Test data included:</strong>
+    The schema comes with sample accounts and transactions so you can try the app straight away without inserting data manually.
+    Example: sort code <code>53-68-92</code>, account number <code>73084635</code>, balance £1071.78 with 4 transactions between April–July 2019.
+  </div>
+</div>
+
+<!-- ──────────────────────  USER JOURNEY  ────────────────────── -->
+<div class="card">
+  <h2>🧑‍💻 How a User Should Experience the App</h2>
+  <p>Here is the intended end-to-end user journey once everything is built:</p>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Open the app</strong> — navigate to <code>http://localhost:3000</code>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Fill in the form</strong> — enter Sort Code, Account Number, and optionally a Start Date and End Date
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Submit</strong> — the frontend sends a POST/PUT request to the backend
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>See results</strong> — the page now shows the <em>Current Balance</em> prominently, followed by a table of matching transactions
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Optionally filter</strong> — enter dates to narrow down to a specific period; leave blank to see all transactions
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────  DOCKER REQUIREMENT  ────────────────────── -->
+<div class="card">
+  <h2>🐳 Running the Application</h2>
+  <p>The requirement is that the app should be easy to run. The goal is:</p>
+  <div class="success-box">
+    🎯 <strong>One command, everything starts:</strong><br><br>
+    <code>docker compose up --build</code><br><br>
+    This should start MySQL, the Spring Boot backend, and the React frontend — all wired together automatically.
+    No manual database setup. No separate terminal windows. Just one command.
+  </div>
+</div>
+
+<!-- ──────────────────────  SUMMARY TABLE  ────────────────────── -->
+<div class="card">
+  <h2>📋 Requirements Summary Table</h2>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Requirement</th>
+      <th>Layer(s) Affected</th>
+      <th>Priority</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Display <code>account.currentBalance</code> on screen</td>
+      <td>Frontend only</td>
+      <td><span class="badge badge-green">Must Have</span></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Add start &amp; end date inputs to the form</td>
+      <td>Frontend</td>
+      <td><span class="badge badge-green">Must Have</span></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Send dates to backend in request body</td>
+      <td>Frontend</td>
+      <td><span class="badge badge-green">Must Have</span></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Accept dates in transaction controller</td>
+      <td>Backend — Controller</td>
+      <td><span class="badge badge-green">Must Have</span></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Filter transactions by date range (inclusive)</td>
+      <td>Backend — Service + Repository</td>
+      <td><span class="badge badge-green">Must Have</span></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Write unit tests with Mockito</td>
+      <td>Backend — Tests</td>
+      <td><span class="badge badge-yellow">Should Have</span></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>One-command Docker Compose setup</td>
+      <td>Infrastructure</td>
+      <td><span class="badge badge-yellow">Should Have</span></td>
+    </tr>
+  </table>
+</div>
+
+<footer>
+  <p>📄 Requirements Document &nbsp;·&nbsp; 3Di Assessment &nbsp;·&nbsp; Online Banking Application &nbsp;·&nbsp; 2026</p>
+</footer>
+
+</body>
+</html>
