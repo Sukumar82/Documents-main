@@ -1,384 +1,479 @@
-# 🚀 Run Configuration Guide
+# � How to Run the Banking App Using Docker
 
-> **A complete, spoon-feeding walkthrough of how to start the Online Banking Application — whether you want to run it with Docker (easiest) or manually on your local machine (for development).**
-
----
-
-## 📑 Table of Contents
-
-1. [What You Need Before Starting](#-prerequisites)
-2. [Option A — Run with Docker Compose (Recommended ⭐)](#-option-a--run-with-docker-compose-recommended)
-3. [Option B — Run Manually (Without Docker)](#-option-b--run-manually-without-docker)
-4. [Verify Everything Is Working](#-verify-everything-is-working)
-5. [Environment Variables & Configuration](#-environment-variables--configuration)
-6. [Common Problems & Fixes](#-common-problems--fixes)
-7. [Stopping the Application](#-stopping-the-application)
+> **Hello! 👋 This guide will help you run the Online Banking Application step by step.**
+> Even if you have never used Docker before, just follow each step one by one and you will be fine!
 
 ---
 
-## 🧰 Prerequisites
+## 📑 What is in this Guide?
 
-Make sure the following are installed on your machine **before** you start.
-
-### For Docker Compose (Option A)
-
-| Tool | Version | How to Check | Download |
-|------|---------|-------------|---------|
-| 🐳 Docker Desktop | 24+ | `docker --version` | https://www.docker.com/products/docker-desktop |
-| 🐳 Docker Compose | v2+ | `docker compose version` | Included in Docker Desktop |
-
-> 💡 **That's it for Option A.** Docker handles everything else — Java, Node.js, MySQL are all bundled inside the containers.
+- [� How to Run the Banking App Using Docker](#-how-to-run-the-banking-app-using-docker)
+  - [📑 What is in this Guide?](#-what-is-in-this-guide)
+  - [💡 What is Docker and Why Do We Need It?](#-what-is-docker-and-why-do-we-need-it)
+  - [🔽 Step 1 — Download and Install Docker Desktop](#-step-1--download-and-install-docker-desktop)
+  - [✅ Step 2 — Check Docker is Working](#-step-2--check-docker-is-working)
+  - [📁 Step 3 — Download / Get the Project Files](#-step-3--download--get-the-project-files)
+  - [💻 Step 4 — Open a Terminal (Command Window)](#-step-4--open-a-terminal-command-window)
+    - [On Windows:](#on-windows)
+    - [On Mac:](#on-mac)
+    - [On Linux:](#on-linux)
+  - [📂 Step 5 — Go to the Project Folder](#-step-5--go-to-the-project-folder)
+  - [▶️ Step 6 — Start the Application](#️-step-6--start-the-application)
+  - [⏳ Step 7 — Wait for Everything to Start](#-step-7--wait-for-everything-to-start)
+  - [🌐 Step 8 — Open the App in Your Browser](#-step-8--open-the-app-in-your-browser)
+  - [🧪 Step 9 — Try the App with Sample Data](#-step-9--try-the-app-with-sample-data)
+    - [To test the date filter:](#to-test-the-date-filter)
+  - [🗄️ Step 10 — Connect to the MySQL Database](#️-step-10--connect-to-the-mysql-database)
+    - [Option A — Using a Database GUI Tool (Easiest for Beginners)](#option-a--using-a-database-gui-tool-easiest-for-beginners)
+    - [Option B — Connect Using the Terminal (No Extra Tools Needed)](#option-b--connect-using-the-terminal-no-extra-tools-needed)
+    - [Database Details Summary](#database-details-summary)
+  - [🛑 How to Stop the App](#-how-to-stop-the-app)
+    - [To stop AND delete all saved data (fresh start):](#to-stop-and-delete-all-saved-data-fresh-start)
+  - [🔧 Something Went Wrong? Fix it Here](#-something-went-wrong-fix-it-here)
+    - [❌ Problem: "Cannot connect to the Docker daemon"](#-problem-cannot-connect-to-the-docker-daemon)
+    - [❌ Problem: Port 3000 is already in use](#-problem-port-3000-is-already-in-use)
+    - [❌ Problem: Port 8080 is already in use](#-problem-port-8080-is-already-in-use)
+    - [❌ Problem: Banking app shows a blank page or error](#-problem-banking-app-shows-a-blank-page-or-error)
+    - [❌ Problem: One container shows "Exited"](#-problem-one-container-shows-exited)
+    - [❌ Problem: MySQL health check keeps failing / backend won't start](#-problem-mysql-health-check-keeps-failing--backend-wont-start)
+    - [❌ Problem: "image not found" or build fails](#-problem-image-not-found-or-build-fails)
+  - [📋 Quick Commands Cheat Sheet](#-quick-commands-cheat-sheet)
+  - [🌐 Where to Open Things](#-where-to-open-things)
+  - [🏁 You Did It!](#-you-did-it)
 
 ---
 
-### For Manual Run (Option B)
+## 💡 What is Docker and Why Do We Need It?
 
-| Tool | Version | How to Check | Download |
-|------|---------|-------------|---------|
-| ☕ Java (JDK) | 17 | `java -version` | https://adoptium.net |
-| 📦 Maven | 3.8+ | `mvn -version` | https://maven.apache.org/download.cgi |
-| ⚛️ Node.js | 18+ | `node -v` | https://nodejs.org |
-| 📦 npm | 8+ | `npm -v` | Included with Node.js |
-| 🗄️ MySQL | 8.0 | `mysql --version` | https://dev.mysql.com/downloads |
+Think of Docker like a **lunchbox**.
+
+- The lunchbox contains everything already packed inside: the **food (your app)**, the **plate (Java/Node.js)**, and the **drink (MySQL database)**.
+- You do **not** need to install Java, Node.js, or MySQL on your computer.
+- Docker downloads and runs everything inside its own little containers.
+- You just press one button (one command) and everything starts.
+
+This app has **3 containers** that start together:
+
+| Container Name | What it Does | Address |
+|---|---|---|
+| `banking_mysql` | The database (stores account data) | Internal only |
+| `banking_backend` | The Java/Spring Boot server (the brain) | http://localhost:8080 |
+| `banking_frontend` | The React website (what you see) | http://localhost:3000 |
 
 ---
 
-## 🐳 Option A — Run with Docker Compose (Recommended ⭐)
+## 🔽 Step 1 — Download and Install Docker Desktop
 
-This is the **easiest way**. One command starts everything — MySQL, the backend, and the frontend.
+1. Go to this website: **https://www.docker.com/products/docker-desktop**
+2. Click the big **Download** button for your operating system (Windows / Mac / Linux)
+3. Open the downloaded file and follow the installer steps (just keep clicking **Next** / **OK**)
+4. When it asks to restart your computer, say **Yes**
+5. After restart, open **Docker Desktop** from your Start Menu or Desktop shortcut
+6. Wait for the Docker whale icon 🐳 to appear in your taskbar and show **"Engine running"**
 
-### Step 1 — Open a terminal in the project root
+> ✅ Docker Desktop is ready when you see the green dot and the message **"Docker Desktop is running"**.
+
+---
+
+## ✅ Step 2 — Check Docker is Working
+
+Open a terminal (see Step 4 below for how to open one) and type this command:
+
+```bash
+docker --version
+```
+
+You should see something like:
+
+```
+Docker version 24.0.5, build ced0996
+```
+
+Also check Docker Compose works:
+
+```bash
+docker compose version
+```
+
+You should see something like:
+
+```
+Docker Compose version v2.20.2
+```
+
+> ✅ If you see version numbers, Docker is ready. If you see an error, go back to Step 1 and make sure Docker Desktop is open and running.
+
+---
+
+## 📁 Step 3 — Download / Get the Project Files
+
+You need the project folder on your computer. The main folder is called **`Documents-main`**.
+
+Inside it you will see these files and folders:
+
+```
+Documents-main/
+│
+├── docker-compose.yml          ← The main file that controls Docker
+│
+├── team3di-springbootbackendtest_v2/    ← Backend (Java) code
+│
+├── team3di-reactfrontendtest_v2/        ← Frontend (React) code
+│
+└── docs/                                ← Documentation (you are reading this!)
+```
+
+> ⚠️ **Important:** Make sure the file `docker-compose.yml` exists inside the `Documents-main` folder. Without it, nothing will work.
+
+---
+
+## 💻 Step 4 — Open a Terminal (Command Window)
+
+A terminal is a window where you type commands. Here is how to open one:
+
+### On Windows:
+- Press the **Windows key** on your keyboard
+- Type **"PowerShell"** or **"Command Prompt"**
+- Click on it to open
+
+### On Mac:
+- Press **Cmd + Space** to open Spotlight
+- Type **"Terminal"** and press Enter
+
+### On Linux:
+- Press **Ctrl + Alt + T**
+
+> 💡 You will type all the commands from this guide into this terminal window.
+
+---
+
+## 📂 Step 5 — Go to the Project Folder
+
+In your terminal, type the `cd` command to **navigate into the project folder**.
+
+`cd` means "Change Directory" — it moves you to a different folder.
 
 ```bash
 cd Documents-main
 ```
 
-Make sure you can see `docker-compose.yml` here:
+If your project is in a different location, for example on your Desktop:
 
+```bash
+# Windows example
+cd C:\Users\YourName\Desktop\Documents-main
+
+# Mac / Linux example
+cd /Users/YourName/Desktop/Documents-main
 ```
-Documents-main/
-  docker-compose.yml   ← this file must exist
-  team3di-springbootbackendtest_v2/
-  team3di-reactfrontendtest_v2/
+
+To check you are in the right folder, type:
+
+```bash
+# Windows
+dir
+
+# Mac / Linux
+ls
 ```
+
+You should see `docker-compose.yml` listed in the output. ✅
 
 ---
 
-### Step 2 — Build and start all containers
+## ▶️ Step 6 — Start the Application
+
+This is the **magic command**. It will:
+- Download all the required software (only on first run)
+- Build the backend Java app
+- Build the frontend React app
+- Start the MySQL database
+- Connect everything together
+
+Type this command and press Enter:
 
 ```bash
 docker compose up --build
 ```
 
-> ⏳ **First run takes 3–5 minutes** — Docker downloads base images and compiles the code.
-> Subsequent runs are much faster because Docker caches the layers.
+> ⏳ **The first time you run this, it takes about 3 to 5 minutes.** This is normal!
+> Docker is downloading things from the internet and compiling the code.
+> Future runs will be much faster (under 30 seconds) because Docker remembers what it downloaded.
 
-You will see output like this (this is good! ✅):
+---
+
+## ⏳ Step 7 — Wait for Everything to Start
+
+While Docker is starting, you will see lots of text scrolling on the screen. **Do not close the terminal!**
+
+You are waiting for lines like these to appear:
 
 ```
-[+] Building backend...
-[+] Building frontend...
 [+] Running 3/3
  ✔ Container banking_mysql     Healthy
  ✔ Container banking_backend   Started
  ✔ Container banking_frontend  Started
 ```
 
+When you see all three containers show ✔, the application is ready.
+
+You can also check by opening a **second terminal window** and running:
+
+```bash
+docker ps
+```
+
+You should see three containers listed like this:
+
+```
+CONTAINER ID   IMAGE                    STATUS                  PORTS                    NAMES
+abc123         documents-main-frontend  Up 2 minutes            0.0.0.0:3000->80/tcp     banking_frontend
+def456         documents-main-backend   Up 2 minutes            0.0.0.0:8080->8080/tcp   banking_backend
+ghi789         mysql:8.0                Up 3 minutes (healthy)  3306/tcp                 banking_mysql
+```
+
+> ✅ All 3 containers should show **"Up"** in the STATUS column.
+
 ---
 
-### Step 3 — Open the application
+## 🌐 Step 8 — Open the App in Your Browser
 
-Once all containers are running, open your browser and go to:
+1. Open any web browser (Chrome, Firefox, Edge — whichever you like)
+2. Click in the address bar at the top
+3. Type this address and press Enter:
 
 ```
 http://localhost:3000
 ```
 
+You should see the **Online Banking Application** website load on your screen!
+
+> 💡 `localhost` means "my own computer". Port `3000` is the door number where the frontend is listening.
+
 ---
 
-### Step 4 — Check all containers are healthy (optional)
+## 🧪 Step 9 — Try the App with Sample Data
+
+The database comes pre-loaded with a test bank account so you can try the app right away.
+
+Fill in the form on the website with these details:
+
+| Field | What to Type |
+|-------|-------------|
+| **Sort Code** | `53-68-92` |
+| **Account Number** | `73084635` |
+| **Start Date** | Leave empty (or type `2019-04-01` to filter) |
+| **End Date** | Leave empty (or type `2019-06-30` to filter) |
+
+Click the **Submit** button.
+
+You should see:
+
+- 💰 **Current Balance: £1,071.78**
+- 📋 A list of **4 transactions** from the year 2019
+
+### To test the date filter:
+
+Fill in Start Date and End Date to only see transactions between those dates:
+
+| Field | Value |
+|-------|-------|
+| Start Date | `2019-05-01` |
+| End Date | `2019-06-30` |
+
+Click Submit. You will see only the transactions that happened between May and June 2019.
+
+---
+
+## 🗄️ Step 10 — Connect to the MySQL Database
+
+The MySQL database runs inside Docker. Here is how to look inside it.
+
+### Option A — Using a Database GUI Tool (Easiest for Beginners)
+
+The easiest way is to use a free tool called **MySQL Workbench** or **DBeaver**.
+
+Download one of these:
+- **MySQL Workbench**: https://dev.mysql.com/downloads/workbench/
+- **DBeaver (free)**: https://dbeaver.io/download/
+
+Then connect using these settings:
+
+| Setting | Value |
+|---------|-------|
+| **Host / Hostname** | `127.0.0.1` |
+| **Port** | `3306` |
+| **Username** | `root` |
+| **Password** | `niceday` |
+| **Database** | `online_bank` |
+
+> ⚠️ **Before connecting with a GUI tool**, you need to expose the MySQL port.
+> Open `docker-compose.yml`, find the `mysql:` section, and add these two lines:
+>
+> ```yaml
+> ports:
+>   - "3306:3306"
+> ```
+>
+> Then restart with `docker compose down` then `docker compose up --build`.
+
+---
+
+### Option B — Connect Using the Terminal (No Extra Tools Needed)
+
+While Docker is running, open a **new terminal window** and type this command to go inside the MySQL container:
 
 ```bash
-docker ps --filter name=banking --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+docker exec -it banking_mysql mysql -u root -pniceday
 ```
 
-Expected output:
+Press Enter. You will now be inside MySQL! You will see:
 
 ```
-NAMES               STATUS                   PORTS
-banking_frontend    Up X minutes             0.0.0.0:3000->80/tcp
-banking_backend     Up X minutes             0.0.0.0:8080->8080/tcp
-banking_mysql       Up X minutes (healthy)   3306/tcp
+Welcome to the MySQL monitor.
+mysql>
 ```
 
----
-
-### To restart without rebuilding
-
-```bash
-docker compose up
-```
-
-### To rebuild only one service (e.g. after a code change)
-
-```bash
-docker compose up --build backend
-docker compose up --build frontend
-```
-
----
-
-## 💻 Option B — Run Manually (Without Docker)
-
-Use this option if you want to develop and make code changes without rebuilding Docker images every time.
-
----
-
-### Step 1 — Start MySQL
-
-If MySQL is already installed locally, make sure it is running on port **3306**.
-
-Then create the database and load the schema:
+Now type these commands one by one to look at the data:
 
 ```sql
--- In MySQL Workbench or mysql CLI:
-CREATE DATABASE online_bank;
+-- Show all databases
+SHOW DATABASES;
+
+-- Use our banking database
 USE online_bank;
 
--- Then run the schema file:
-SOURCE path/to/team3di-springbootbackendtest_v2/team3di-springbootbackendtest_v2/src/main/resources/schema.sql;
+-- Show all tables
+SHOW TABLES;
 
--- Optionally load sample data:
-SOURCE path/to/team3di-springbootbackendtest_v2/team3di-springbootbackendtest_v2/src/main/resources/data.sql;
+-- See all accounts
+SELECT * FROM account;
+
+-- See all transactions
+SELECT * FROM transaction;
+
+-- Exit MySQL when done
+EXIT;
 ```
 
-Or using the MySQL CLI:
+> 💡 Every SQL command ends with a semicolon `;` — do not forget it!
+
+---
+
+### Database Details Summary
+
+| Detail | Value |
+|--------|-------|
+| Database Name | `online_bank` |
+| Username | `root` |
+| Password | `niceday` |
+| Host (from inside Docker) | `mysql` |
+| Host (from your computer) | `127.0.0.1` |
+| Port | `3306` |
+| Tables | `account`, `transaction` |
+
+---
+
+## 🛑 How to Stop the App
+
+When you are done and want to turn everything off:
+
+Go to the terminal where Docker is running and press:
+
+```
+Ctrl + C
+```
+
+This stops the containers. The data in the database is **saved** — it will still be there next time you start.
+
+Or from any terminal window, type:
 
 ```bash
-mysql -u root -p online_bank < src/main/resources/schema.sql
-mysql -u root -p online_bank < src/main/resources/data.sql
+docker compose down
 ```
 
----
-
-### Step 2 — Start the Spring Boot Backend
+### To stop AND delete all saved data (fresh start):
 
 ```bash
-cd team3di-springbootbackendtest_v2/team3di-springbootbackendtest_v2
-
-mvn spring-boot:run
+docker compose down -v
 ```
 
-The backend will start on **port 8080**. You should see:
-
-```
-Started ThreeDiTestingApplication in X.XXX seconds
-```
-
-> ⚙️ **Check `src/main/resources/application.properties`** to confirm the MySQL connection settings match your local setup (host, port, username, password).
+> ⚠️ The `-v` flag deletes the database data too. Use this only if you want a completely clean start.
 
 ---
 
-### Step 3 — Start the React Frontend
+## 🔧 Something Went Wrong? Fix it Here
 
-Open a **second terminal window** and run:
+### ❌ Problem: "Cannot connect to the Docker daemon"
 
+**What it means:** Docker Desktop is not open or not running.
+
+**Fix:**
+1. Open **Docker Desktop** from your Start Menu
+2. Wait for the green dot and "Engine running" message
+3. Try the command again
+
+---
+
+### ❌ Problem: Port 3000 is already in use
+
+```
+Error: address already in use :::3000
+```
+
+**What it means:** Something else on your computer is already using port 3000.
+
+**Fix (Windows):**
 ```bash
-cd team3di-reactfrontendtest_v2/team3di-reactfrontendtest_v2
-
-npm install --legacy-peer-deps
-
-npm start
-```
-
-The React development server will start and automatically open:
-
-```
-http://localhost:3000
-```
-
-> 💡 In development mode, the React app proxies API calls to `http://localhost:8080`. This is configured in `package.json` under the `"proxy"` field.
-
----
-
-## ✅ Verify Everything Is Working
-
-### Check the backend is responding
-
-Open this URL in your browser or use curl:
-
-```
-http://localhost:8080/api/account
-```
-
-You should get a JSON response (not a connection error).
-
----
-
-### Test with sample data
-
-Use these credentials that come pre-loaded in `data.sql`:
-
-| Field | Value |
-|-------|-------|
-| 🔢 Sort Code | `53-68-92` |
-| 🏦 Account Number | `73084635` |
-
-Expected result:
-- 💰 **Current Balance: £1,071.78**
-- 📋 **4 transactions** listed (April – July 2019)
-
----
-
-### Test the date filter
-
-Enter:
-
-| Field | Value |
-|-------|-------|
-| 📅 Start Date | `2019-05-01` |
-| 📅 End Date | `2019-06-30` |
-
-Expected result: Only transactions between May 1 and June 30, 2019 appear.
-
----
-
-## ⚙️ Environment Variables & Configuration
-
-### Backend — `application.properties`
-
-Located at:
-```
-team3di-springbootbackendtest_v2/.../src/main/resources/application.properties
-```
-
-Key settings:
-
-```properties
-# Database connection
-spring.datasource.url=jdbc:mysql://mysql:3306/online_bank
-spring.datasource.username=root
-spring.datasource.password=rootpassword
-
-# Schema management
-spring.sql.init.mode=always
-spring.sql.init.schema-locations=classpath:schema.sql
-spring.sql.init.data-locations=classpath:data.sql
-
-# Server port
-server.port=8080
-```
-
-> 🐳 **When running in Docker:** the hostname `mysql` refers to the MySQL container on the Docker network.
-> 💻 **When running locally:** change `mysql` to `localhost`.
-
----
-
-### Docker Compose — `docker-compose.yml`
-
-Located at the project root. Key environment variables passed to each container:
-
-```yaml
-# MySQL container
-MYSQL_ROOT_PASSWORD: rootpassword
-MYSQL_DATABASE: online_bank
-
-# Backend container
-SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/online_bank
-SPRING_DATASOURCE_USERNAME: root
-SPRING_DATASOURCE_PASSWORD: rootpassword
-```
-
----
-
-## 🔧 Common Problems & Fixes
-
-### 🔴 Problem: Port 3000 already in use
-
-```
-Error: listen EADDRINUSE: address already in use :::3000
-```
-
-**Fix:** Kill whatever is using port 3000:
-
-```bash
-# Windows
 netstat -ano | findstr :3000
-taskkill /PID <PID> /F
+taskkill /PID <the number you see> /F
+```
 
-# Mac / Linux
+**Fix (Mac / Linux):**
+```bash
 lsof -ti:3000 | xargs kill
 ```
 
 ---
 
-### 🔴 Problem: Port 8080 already in use
+### ❌ Problem: Port 8080 is already in use
 
-**Fix:** Stop any other Spring Boot or Tomcat process using port 8080.
-
+**Fix (Windows):**
 ```bash
-# Windows
 netstat -ano | findstr :8080
-taskkill /PID <PID> /F
+taskkill /PID <the number you see> /F
 ```
 
 ---
 
-### 🔴 Problem: MySQL connection refused
+### ❌ Problem: Banking app shows a blank page or error
 
-```
-com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
-```
+**What to check:**
 
-**Fix checklist:**
-1. ✅ Is MySQL running? (`docker ps` or check MySQL service)
-2. ✅ Is the hostname correct? (`mysql` for Docker, `localhost` for local)
-3. ✅ Is the password correct in `application.properties`?
-4. ✅ Does the `online_bank` database exist?
+1. Open a terminal and run:
+   ```bash
+   docker ps
+   ```
+2. Check all 3 containers are **"Up"** — if any show **"Exited"**, read the next fix.
 
 ---
 
-### 🔴 Problem: `npm ci` fails with lockfile error
+### ❌ Problem: One container shows "Exited"
 
-```
-npm error `npm ci` can only install packages when package-lock.json is in sync
-```
-
-**Fix:** Use `npm install` instead:
+**Fix:** Check the logs to see what went wrong:
 
 ```bash
-npm install --legacy-peer-deps
+# Check backend logs
+docker compose logs backend
+
+# Check frontend logs
+docker compose logs frontend
+
+# Check database logs
+docker compose logs mysql
 ```
 
----
-
-### 🔴 Problem: "no main manifest attribute in app.jar"
-
-```
-Error: Unable to access jarfile app.jar
-```
-
-**Fix:** Make sure `pom.xml` has the `spring-boot-maven-plugin` with a `repackage` goal. Then rebuild:
-
-```bash
-mvn clean package -DskipTests
-```
-
----
-
-### 🔴 Problem: Docker image not found (openjdk deprecated)
-
-```
-docker: Error response from daemon: pull access denied for openjdk:17-jdk-slim
-```
-
-**Fix:** The backend `Dockerfile` uses `eclipse-temurin:17-jre-jammy` which is the current official replacement. This should already be fixed. If not, check the backend `Dockerfile`.
-
----
-
-### 🔴 Problem: Backend takes too long and MySQL health check fails
-
-**Fix:** Increase the `start_period` in `docker-compose.yml` under the MySQL healthcheck, or simply re-run:
+Then try a full restart:
 
 ```bash
 docker compose down
@@ -387,49 +482,77 @@ docker compose up --build
 
 ---
 
-## 🛑 Stopping the Application
+### ❌ Problem: MySQL health check keeps failing / backend won't start
 
-### Docker Compose
+**What it means:** MySQL took too long to start, and the backend gave up waiting.
+
+**Fix:** Just stop and start again. MySQL will be ready this time:
 
 ```bash
-# Stop containers (data is preserved)
 docker compose down
-
-# Stop AND remove all data volumes (fresh start next time)
-docker compose down -v
+docker compose up --build
 ```
 
-### Manual / Local
+---
 
-- **Backend:** Press `Ctrl + C` in the terminal running `mvn spring-boot:run`
-- **Frontend:** Press `Ctrl + C` in the terminal running `npm start`
-- **MySQL:** Stop the MySQL service via your OS or MySQL Workbench
+### ❌ Problem: "image not found" or build fails
+
+**Fix:** Make sure you are in the correct folder (the one containing `docker-compose.yml`) and run:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
 
 ---
 
-## 📋 Quick Reference Cheatsheet
+## 📋 Quick Commands Cheat Sheet
 
-| Task | Command |
-|------|---------|
-| ▶️ Start everything (Docker) | `docker compose up --build` |
-| 🔄 Restart without rebuilding | `docker compose up` |
-| ⏹️ Stop everything | `docker compose down` |
-| 📋 Check container status | `docker ps --filter name=banking` |
-| 📜 View backend logs | `docker compose logs backend` |
-| 📜 View frontend logs | `docker compose logs frontend` |
-| 📜 View MySQL logs | `docker compose logs mysql` |
-| 🔨 Rebuild one service | `docker compose up --build backend` |
-| 🗑️ Full clean restart | `docker compose down -v && docker compose up --build` |
+Save this section — you will use these commands all the time!
+
+| What You Want to Do | Command to Type |
+|---------------------|----------------|
+| Start the app (first time or after code changes) | `docker compose up --build` |
+| Start the app (already built, just restart) | `docker compose up` |
+| Stop the app (keep data) | `docker compose down` |
+| Stop the app AND delete all data | `docker compose down -v` |
+| Check what is running | `docker ps` |
+| See backend logs | `docker compose logs backend` |
+| See frontend logs | `docker compose logs frontend` |
+| See database logs | `docker compose logs mysql` |
+| Go inside MySQL to run SQL | `docker exec -it banking_mysql mysql -u root -pniceday` |
+| Rebuild only the backend | `docker compose up --build backend` |
+| Rebuild only the frontend | `docker compose up --build frontend` |
+| Full clean restart (delete everything) | `docker compose down -v` then `docker compose up --build` |
 
 ---
 
-## 🌐 Service URLs
+## 🌐 Where to Open Things
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| 🖥️ Frontend | http://localhost:3000 | React web app |
-| ☕ Backend API | http://localhost:8080/api | Spring Boot REST API |
-| 🗄️ MySQL | `localhost:3306` (local only) | Database (internal to Docker network) |
+| What | Address to Type in Browser | Description |
+|------|---------------------------|-------------|
+| 🖥️ The Banking Website | `http://localhost:3000` | The main app you use |
+| ☕ Backend API (raw) | `http://localhost:8080/api` | The Java server (for developers) |
+| 🗄️ MySQL Database | `127.0.0.1:3306` | Connect using MySQL Workbench or DBeaver |
+
+---
+
+## 🏁 You Did It!
+
+Here is a quick recap of everything you did:
+
+```
+1. Installed Docker Desktop ✅
+2. Opened a terminal ✅
+3. Navigated to the project folder ✅
+4. Ran: docker compose up --build ✅
+5. Waited for all 3 containers to start ✅
+6. Opened http://localhost:3000 in the browser ✅
+7. Typed sort code 53-68-92 and account 73084635 ✅
+8. Saw the balance £1,071.78 and transactions ✅
+```
+
+Well done! 🎉 The application is running.
 
 ---
 
