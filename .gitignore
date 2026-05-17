@@ -1,0 +1,14 @@
+# Metals (Scala IDE)
+.metals/
+.bloop/
+.bsp/
+
+# VS Code (optional - remove if you want to share settings)
+# .vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
