@@ -1,81 +1,20 @@
-# � How to Run the Banking App Using Docker
+# How to Run the Banking App Using Docker
 
-> **Hello! 👋 This guide will help you run the Online Banking Application step by step.**
-> Even if you have never used Docker before, just follow each step one by one and you will be fine!
 
----
-
-## 📑 What is in this Guide?
-
-- [� How to Run the Banking App Using Docker](#-how-to-run-the-banking-app-using-docker)
-  - [📑 What is in this Guide?](#-what-is-in-this-guide)
-  - [💡 What is Docker and Why Do We Need It?](#-what-is-docker-and-why-do-we-need-it)
-  - [🔽 Step 1 — Download and Install Docker Desktop](#-step-1--download-and-install-docker-desktop)
-  - [✅ Step 2 — Check Docker is Working](#-step-2--check-docker-is-working)
-  - [📁 Step 3 — Download / Get the Project Files](#-step-3--download--get-the-project-files)
-  - [💻 Step 4 — Open a Terminal (Command Window)](#-step-4--open-a-terminal-command-window)
-    - [On Windows:](#on-windows)
-    - [On Mac:](#on-mac)
-    - [On Linux:](#on-linux)
-  - [📂 Step 5 — Go to the Project Folder](#-step-5--go-to-the-project-folder)
-  - [▶️ Step 6 — Start the Application](#️-step-6--start-the-application)
-  - [⏳ Step 7 — Wait for Everything to Start](#-step-7--wait-for-everything-to-start)
-  - [🌐 Step 8 — Open the App in Your Browser](#-step-8--open-the-app-in-your-browser)
-  - [🧪 Step 9 — Try the App with Sample Data](#-step-9--try-the-app-with-sample-data)
-    - [To test the date filter:](#to-test-the-date-filter)
-  - [🗄️ Step 10 — Connect to the MySQL Database](#️-step-10--connect-to-the-mysql-database)
-    - [Option A — Using a Database GUI Tool (Easiest for Beginners)](#option-a--using-a-database-gui-tool-easiest-for-beginners)
-    - [Option B — Connect Using the Terminal (No Extra Tools Needed)](#option-b--connect-using-the-terminal-no-extra-tools-needed)
-    - [Database Details Summary](#database-details-summary)
-  - [🛑 How to Stop the App](#-how-to-stop-the-app)
-    - [To stop AND delete all saved data (fresh start):](#to-stop-and-delete-all-saved-data-fresh-start)
-  - [🔧 Something Went Wrong? Fix it Here](#-something-went-wrong-fix-it-here)
-    - [❌ Problem: "Cannot connect to the Docker daemon"](#-problem-cannot-connect-to-the-docker-daemon)
-    - [❌ Problem: Port 3000 is already in use](#-problem-port-3000-is-already-in-use)
-    - [❌ Problem: Port 8080 is already in use](#-problem-port-8080-is-already-in-use)
-    - [❌ Problem: Banking app shows a blank page or error](#-problem-banking-app-shows-a-blank-page-or-error)
-    - [❌ Problem: One container shows "Exited"](#-problem-one-container-shows-exited)
-    - [❌ Problem: MySQL health check keeps failing / backend won't start](#-problem-mysql-health-check-keeps-failing--backend-wont-start)
-    - [❌ Problem: "image not found" or build fails](#-problem-image-not-found-or-build-fails)
-  - [📋 Quick Commands Cheat Sheet](#-quick-commands-cheat-sheet)
-  - [🌐 Where to Open Things](#-where-to-open-things)
-  - [🏁 You Did It!](#-you-did-it)
-
----
-
-## 💡 What is Docker and Why Do We Need It?
-
-Think of Docker like a **lunchbox**.
-
-- The lunchbox contains everything already packed inside: the **food (your app)**, the **plate (Java/Node.js)**, and the **drink (MySQL database)**.
-- You do **not** need to install Java, Node.js, or MySQL on your computer.
-- Docker downloads and runs everything inside its own little containers.
-- You just press one button (one command) and everything starts.
-
-This app has **3 containers** that start together:
-
-| Container Name | What it Does | Address |
-|---|---|---|
-| `banking_mysql` | The database (stores account data) | Internal only |
-| `banking_backend` | The Java/Spring Boot server (the brain) | http://localhost:8080 |
-| `banking_frontend` | The React website (what you see) | http://localhost:3000 |
-
----
-
-## 🔽 Step 1 — Download and Install Docker Desktop
+##  Step 1 — Download and Install Docker Desktop
 
 1. Go to this website: **https://www.docker.com/products/docker-desktop**
 2. Click the big **Download** button for your operating system (Windows / Mac / Linux)
 3. Open the downloaded file and follow the installer steps (just keep clicking **Next** / **OK**)
 4. When it asks to restart your computer, say **Yes**
 5. After restart, open **Docker Desktop** from your Start Menu or Desktop shortcut
-6. Wait for the Docker whale icon 🐳 to appear in your taskbar and show **"Engine running"**
+6. Wait for the Docker whale icon to appear in your taskbar and show **"Engine running"**
 
-> ✅ Docker Desktop is ready when you see the green dot and the message **"Docker Desktop is running"**.
+>  Docker Desktop is ready when you see the green dot and the message **"Docker Desktop is running"**.
 
 ---
 
-## ✅ Step 2 — Check Docker is Working
+## Step 2 — Check Docker is Working
 
 Open a terminal (see Step 4 below for how to open one) and type this command:
 
@@ -101,7 +40,7 @@ You should see something like:
 Docker Compose version v2.20.2
 ```
 
-> ✅ If you see version numbers, Docker is ready. If you see an error, go back to Step 1 and make sure Docker Desktop is open and running.
+> If you see version numbers, Docker is ready. If you see an error, go back to Step 1 and make sure Docker Desktop is open and running.
 
 ---
 
@@ -147,7 +86,7 @@ A terminal is a window where you type commands. Here is how to open one:
 
 ---
 
-## 📂 Step 5 — Go to the Project Folder
+##  Step 5 — Go to the Project Folder
 
 In your terminal, type the `cd` command to **navigate into the project folder**.
 
@@ -181,7 +120,7 @@ You should see `docker-compose.yml` listed in the output. ✅
 
 ---
 
-## ▶️ Step 6 — Start the Application
+##  Step 6 — Start the Application
 
 This is the **magic command**. It will:
 - Download all the required software (only on first run)
@@ -196,13 +135,13 @@ Type this command and press Enter:
 docker compose up --build
 ```
 
-> ⏳ **The first time you run this, it takes about 3 to 5 minutes.** This is normal!
+>  **The first time you run this, it takes about 3 to 5 minutes.** This is normal!
 > Docker is downloading things from the internet and compiling the code.
 > Future runs will be much faster (under 30 seconds) because Docker remembers what it downloaded.
 
 ---
 
-## ⏳ Step 7 — Wait for Everything to Start
+##  Step 7 — Wait for Everything to Start
 
 While Docker is starting, you will see lots of text scrolling on the screen. **Do not close the terminal!**
 
@@ -232,11 +171,11 @@ def456         documents-main-backend   Up 2 minutes            0.0.0.0:8080->80
 ghi789         mysql:8.0                Up 3 minutes (healthy)  3306/tcp                 banking_mysql
 ```
 
-> ✅ All 3 containers should show **"Up"** in the STATUS column.
+>  All 3 containers should show **"Up"** in the STATUS column.
 
 ---
 
-## 🌐 Step 8 — Open the App in Your Browser
+##  Step 8 — Open the App in Your Browser
 
 1. Open any web browser (Chrome, Firefox, Edge — whichever you like)
 2. Click in the address bar at the top
@@ -248,11 +187,11 @@ http://localhost:3000
 
 You should see the **Online Banking Application** website load on your screen!
 
-> 💡 `localhost` means "my own computer". Port `3000` is the door number where the frontend is listening.
+>  `localhost` means "my own computer". Port `3000` is the door number where the frontend is listening.
 
 ---
 
-## 🧪 Step 9 — Try the App with Sample Data
+##  Step 9 — Try the App with Sample Data
 
 The database comes pre-loaded with a test bank account so you can try the app right away.
 
@@ -269,8 +208,8 @@ Click the **Submit** button.
 
 You should see:
 
-- 💰 **Current Balance: £1,071.78**
-- 📋 A list of **4 transactions** from the year 2019
+-  **Current Balance: £1,071.78**
+-  A list of **4 transactions** from the year 2019
 
 ### To test the date filter:
 
@@ -285,7 +224,7 @@ Click Submit. You will see only the transactions that happened between May and J
 
 ---
 
-## 🗄️ Step 10 — Connect to the MySQL Database
+##  Step 10 — Connect to the MySQL Database
 
 The MySQL database runs inside Docker. Here is how to look inside it.
 
@@ -307,7 +246,7 @@ Then connect using these settings:
 | **Password** | `niceday` |
 | **Database** | `online_bank` |
 
-> ⚠️ **Before connecting with a GUI tool**, you need to expose the MySQL port.
+>  **Before connecting with a GUI tool**, you need to expose the MySQL port.
 > Open `docker-compose.yml`, find the `mysql:` section, and add these two lines:
 >
 > ```yaml
@@ -374,7 +313,7 @@ EXIT;
 
 ---
 
-## 🛑 How to Stop the App
+##  How to Stop the App
 
 When you are done and want to turn everything off:
 
@@ -398,13 +337,13 @@ docker compose down
 docker compose down -v
 ```
 
-> ⚠️ The `-v` flag deletes the database data too. Use this only if you want a completely clean start.
+>  The `-v` flag deletes the database data too. Use this only if you want a completely clean start.
 
 ---
 
 ## 🔧 Something Went Wrong? Fix it Here
 
-### ❌ Problem: "Cannot connect to the Docker daemon"
+###  Problem: "Cannot connect to the Docker daemon"
 
 **What it means:** Docker Desktop is not open or not running.
 
@@ -482,7 +421,7 @@ docker compose up --build
 
 ---
 
-### ❌ Problem: MySQL health check keeps failing / backend won't start
+###  Problem: MySQL health check keeps failing / backend won't start
 
 **What it means:** MySQL took too long to start, and the backend gave up waiting.
 
@@ -495,7 +434,7 @@ docker compose up --build
 
 ---
 
-### ❌ Problem: "image not found" or build fails
+###  Problem: "image not found" or build fails
 
 **Fix:** Make sure you are in the correct folder (the one containing `docker-compose.yml`) and run:
 
@@ -506,7 +445,7 @@ docker compose up --build
 
 ---
 
-## 📋 Quick Commands Cheat Sheet
+##  Quick Commands Cheat Sheet
 
 Save this section — you will use these commands all the time!
 
@@ -527,7 +466,7 @@ Save this section — you will use these commands all the time!
 
 ---
 
-## 🌐 Where to Open Things
+##  Where to Open Things
 
 | What | Address to Type in Browser | Description |
 |------|---------------------------|-------------|
@@ -537,7 +476,7 @@ Save this section — you will use these commands all the time!
 
 ---
 
-## 🏁 You Did It!
+##  You Did It!
 
 Here is a quick recap of everything you did:
 
